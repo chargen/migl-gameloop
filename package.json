@@ -1,0 +1,32 @@
+{
+  "name": "migl-gameloop",
+  "version": "1.0.0",
+  "description": "Micro Game Library : Gameloop",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/kchapelier/migl-gameloop.git"
+  },
+  "keywords": [
+    "game",
+    "loop"
+  ],
+  "author": "Kevin Chapelier",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/kchapelier/migl-gameloop/issues"
+  },
+  "homepage": "https://github.com/kchapelier/migl-gameloop",
+  "dependencies": {
+    "raf": "^2.0.0"
+  },
+  "devDependencies": {
+    "gulp": "^3.8.0",
+    "gulp-jscs": "^1.3.0",
+    "gulp-jshint": "^1.9.0",
+    "jshint-stylish": "^1.0.0"
+  }
+}
