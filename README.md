@@ -9,6 +9,7 @@ Micro Game Library : Game Loop
  * The game loop does not make any assumption about your renderer
  * Several loops can run at the same time on a given web page
  * The library can also run on the server (relying on raf's ability to do so)
+ * In the browser, the game loop is automatically stopped when the page is hidden and resumes when it is once again visible
 
 ## Basic example
 

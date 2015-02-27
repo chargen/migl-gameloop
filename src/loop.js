@@ -2,11 +2,16 @@
 
 var raf = require('raf'),
     requestAnimationFrame = raf,
-    cancelAnimationFrame = raf.cancel;
+    cancelAnimationFrame = raf.cancel,
+    inBrowser = typeof document === 'object' && typeof window === 'object';
 
 var Loop = function () {
     this.running = false;
     this.runningMethod = this.run.bind(this);
+
+    if (inBrowser) {
+        this.observePageVisibility();
+    }
 };
 
 Loop.prototype.lastTime = null;
@@ -32,6 +37,24 @@ Loop.prototype.stop = function () {
         this.running = false;
         this.lastTime = null;
     }
+};
+
+/**
+ * Add an event listener to the document's visibilitychange to stop the loop when the page is hidden
+ * @protected
+ */
+Loop.prototype.observePageVisibility = function () {
+    var self = this;
+
+    var visibilityChangeHandler = function visibilityChangeHandler () {
+        if (!!document.hidden) {
+            self.stop();
+        } else {
+            self.start();
+        }
+    };
+
+    document.addEventListener('visibilitychange', visibilityChangeHandler);
 };
 
 /**
