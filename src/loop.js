@@ -38,6 +38,7 @@ Loop.prototype.start = function () {
  */
 Loop.prototype.pause = function () {
     this.paused = true;
+    this.lastTime = null;
 };
 
 /**

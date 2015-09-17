@@ -56,7 +56,7 @@ The library exposes five method hooks, here listed in order of execution :
 
 ## Changelog
 
-### 1.2.0 (2015-09-18) :
+### 1.2.1 (2015-09-18) :
 
  * Fix stop() not working properly.
  * Update dependencies.
