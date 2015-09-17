@@ -8,6 +8,7 @@ var raf = require('raf'),
 var Loop = function () {
     this.running = false;
     this.runningMethod = this.run.bind(this);
+    this.paused = false;
 
     if (inBrowser) {
         this.observePageVisibility();
@@ -18,6 +19,7 @@ Loop.prototype.lastTime = null;
 Loop.prototype.frameRate = null;
 Loop.prototype.running = null;
 Loop.prototype.runningMethod = null;
+Loop.prototype.paused = null;
 
 /**
  * Start the game loop
@@ -26,6 +28,16 @@ Loop.prototype.start = function () {
     if (this.running === false) {
         this.running = requestAnimationFrame(this.runningMethod);
     }
+
+    this.paused = false;
+};
+
+/**
+ * Pause the game loop
+ * @protected
+ */
+Loop.prototype.pause = function () {
+    this.paused = true;
 };
 
 /**
@@ -35,6 +47,7 @@ Loop.prototype.stop = function () {
     if (this.running !== false) {
         cancelAnimationFrame(this.running);
         this.running = false;
+        this.paused = false;
         this.lastTime = null;
     }
 };
@@ -47,10 +60,12 @@ Loop.prototype.observePageVisibility = function () {
     var self = this;
 
     var visibilityChangeHandler = function visibilityChangeHandler () {
-        if (!!document.hidden) {
-            self.stop();
-        } else {
-            self.start();
+        if (self.running !== false) {
+            if (!!document.hidden) {
+                self.pause();
+            } else {
+                self.start();
+            }
         }
     };
 
@@ -87,17 +102,19 @@ Loop.prototype.run = function (time) {
         deltaTime = time - this.lastTime;
     }
 
+    this.running = requestAnimationFrame(this.runningMethod);
+
     if (this.validateFrame(deltaTime)) {
         this.lastTime = time;
 
-        this.update(deltaTime);
-        this.postUpdate(deltaTime);
-        this.preRender(deltaTime);
-        this.render(deltaTime);
-        this.postRender(deltaTime);
+        if (!this.paused) {
+            this.update(deltaTime);
+            this.postUpdate(deltaTime);
+            this.preRender(deltaTime);
+            this.render(deltaTime);
+            this.postRender(deltaTime);
+        }
     }
-
-    this.running = requestAnimationFrame(this.runningMethod);
 };
 
 /**
