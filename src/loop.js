@@ -1,20 +1,51 @@
 "use strict";
 
-var raf = require('raf'),
-    requestAnimationFrame = raf,
-    cancelAnimationFrame = raf.cancel,
-    inBrowser = typeof document === 'object' && typeof window === 'object';
+var raf = require('./raf'),
+    requestAnimationFrame = raf.requestAnimationFrame,
+    cancelAnimationFrame = raf.cancelAnimationFrame,
+    noop = function () {},
+    expectedSteps = ['update', 'postUpdate', 'preRender', 'render', 'postRender'];
 
-var Loop = function () {
+/**
+ *
+ * @param {object} steps
+ * @returns {object} Steps object with noop for any missing step
+ */
+function prepareSteps (steps) {
+    var mergedSteps = {},
+        i = 0,
+        key;
+
+    for (; i < expectedSteps.length; i++) {
+        key = expectedSteps[i];
+
+        if (steps && typeof steps[key] === 'function') {
+            mergedSteps[key] = steps[key];
+        } else {
+            mergedSteps[key] = noop;
+        }
+    }
+
+    return mergedSteps;
+}
+
+var Loop = function (steps) {
+    if (!raf.fullSupport) {
+        throw new Error('requestAnimationFrame and cancelAnimationFrame are not fully supported by this browser');
+    }
+
+    this.steps = prepareSteps(steps);
+
+    this.lastTime = null;
+    this.frameRate = null;
     this.running = false;
     this.runningMethod = this.run.bind(this);
     this.paused = false;
 
-    if (inBrowser) {
-        this.observePageVisibility();
-    }
+    this.observePageVisibility();
 };
 
+Loop.prototype.steps = null;
 Loop.prototype.lastTime = null;
 Loop.prototype.frameRate = null;
 Loop.prototype.running = null;
@@ -70,7 +101,7 @@ Loop.prototype.observePageVisibility = function () {
         }
     };
 
-    document.addEventListener('visibilitychange', visibilityChangeHandler);
+    window.document.addEventListener('visibilitychange', visibilityChangeHandler);
 };
 
 /**
@@ -95,7 +126,8 @@ Loop.prototype.validateFrame = function (deltaTime) {
  * @param time
  */
 Loop.prototype.run = function (time) {
-    var deltaTime;
+    var steps = this.steps,
+        deltaTime;
 
     if (this.lastTime === null) {
         deltaTime = 0;
@@ -109,48 +141,13 @@ Loop.prototype.run = function (time) {
         this.lastTime = time;
 
         if (!this.paused) {
-            this.update(deltaTime);
-            this.postUpdate(deltaTime);
-            this.preRender(deltaTime);
-            this.render(deltaTime);
-            this.postRender(deltaTime);
+            steps.update(deltaTime);
+            steps.postUpdate(deltaTime);
+            steps.preRender(deltaTime);
+            steps.render(deltaTime);
+            steps.postRender(deltaTime);
         }
     }
-};
-
-/**
- * Method first called on each frame
- * @param {float} deltaTime
- */
-Loop.prototype.update = function (deltaTime) {
-};
-
-/**
- * Method called after the update and before the preRender on each frame
- * @param {float} deltaTime
- */
-Loop.prototype.postUpdate = function (deltaTime) {
-};
-
-/**
- * Method called after the postUpdate and before the render on each frame
- * @param {float} deltaTime
- */
-Loop.prototype.preRender = function (deltaTime) {
-};
-
-/**
- * Method called to render / draw the game after the preRender on each frame
- * @param {float} deltaTime
- */
-Loop.prototype.render = function (deltaTime) {
-};
-
-/**
- * Method called after the render on each frame
- * @param deltaTime
- */
-Loop.prototype.postRender = function (deltaTime) {
 };
 
 module.exports = Loop;
