@@ -8,28 +8,26 @@ Micro Game Library : Game Loop
  * The frame rate can be arbitrarily capped at any time
  * The game loop does not make any assumption about your renderer
  * Several loops can run at the same time on a given web page
- * The library can also run on the server (relying on raf's ability to do so)
- * In the browser, the game loop is automatically paused when the page is hidden and resumes when it is once again visible
+ * The game loop is automatically paused when the page is hidden and resumes when it is once again visible
 
 ## Basic example
 
 ```js
-var Gameloop = require('migl-gameloop');
-
-var loop = new Gameloop(),
+var Gameloop = require('migl-gameloop'),
     frame = 0;
 
-loop.update = function(deltaTime) {
-    //do something ... the actual game logic
+var loop = new Gameloop({
+        update: function(deltaTime) {
+            //do something ... the actual game logic
 
-    frame++;
-};
+            frame++;
+        },
+        render: function(deltaTime) {
+            //do something ... display things on screen
 
-loop.render = function(deltaTime) {
-    //do something ... display things on screen
-
-    console.log('frame #' + frame);
-};
+            console.log('frame #' + frame);
+        }
+    });
 
 loop.start();
 ```
@@ -42,11 +40,13 @@ The library exposes a start and a stop method.
 
 The target number of frames per second can be defined at anytime.
 
-```loop.frameRate = 30;```
+```loop.setFrameRate(30);```
+
+It should be noted that, due to the way the browser works, only values equal to the base frame rate of the browser (usually 60 fps, but 90 fps for WebVR browsers) divided by an integer makes sense.
 
 ## Hooks :
 
-The library exposes five method hooks, here listed in order of execution :
+The library accepts five loop hooks, here listed in order of execution :
 
  * preUpdate
  * update
@@ -54,9 +54,23 @@ The library exposes five method hooks, here listed in order of execution :
  * render
  * postRender
 
+As well as two events hooks to detect when the loops is automatically paused or resumed due to the page visibility :
+
+ * pause
+ * resume
+
 ## Changelog
 
-### 1.2.1 (2015-09-18) :
+### [2.0.0](https://github.com/kchapelier/migl-gameloop/tree/2.0.0) (2016-05-21)
+
+ * Change constructor API.
+ * Add setFrameRate method instead of direct use of the frameRate property.
+ * Add hooks for 'pause' and 'resume' events.
+ * Stop depending on raf, stop trying to make up for lack of requestAnimationFrame / cancelAnimationFrame support.
+ * Does not support node.js (server side) anymore.
+ * Smaller.
+
+### [1.2.1](https://github.com/kchapelier/migl-gameloop/tree/1.2.1) (2015-09-18) :
 
  * Fix stop() not working properly.
  * Update dependencies.
