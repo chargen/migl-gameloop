@@ -40,7 +40,9 @@ The library exposes a start and a stop method.
 
 The target number of frames per second can be defined at anytime.
 
-```loop.setFrameRate(30);```
+```
+loop.setFrameRate(30);
+```
 
 It should be noted that, due to the way the browser works, only values equal to the base frame rate of the browser (usually 60 fps, but 90 fps for WebVR browsers) divided by an integer makes sense.
 
