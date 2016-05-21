@@ -43,9 +43,10 @@ var Loop = function (steps) {
     }
 
     this.steps = prepareSteps(steps);
-    this.lastTime = null;
+
     this.frameRate = null;
     this.frameDuration = null;
+    this.lastTime = null;
     this.running = false;
     this.runningMethod = this.run.bind(this);
     this.paused = false;
@@ -126,16 +127,6 @@ Loop.prototype.observePageVisibility = function () {
 };
 
 /**
- * Validate the frame in regards to frame limiting
- * @protected
- * @param {number} deltaTime
- * @returns {boolean} Validity of the frame
- */
-Loop.prototype.validateFrame = function (deltaTime) {
-    return (this.frameRate === null || this.lastTime === null || deltaTime >= this.frameDuration);
-};
-
-/**
  * Main method called at each interval
  * @protected
  * @param time
@@ -146,7 +137,7 @@ Loop.prototype.run = function (time) {
 
     this.running = requestAnimationFrame(this.runningMethod);
 
-    if (this.validateFrame(deltaTime)) {
+    if (deltaTime >= this.frameDuration || this.frameRate === null || this.lastTime === null) {
         if (!this.paused) {
             steps.update(deltaTime);
             steps.postUpdate(deltaTime);
