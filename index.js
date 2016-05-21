@@ -11,6 +11,7 @@ var requestAnimationFrame = (
         window.webkitCancelRequestAnimationFrame ||
         window.mozCancelAnimationFrame
     ),
+    visibilityApiSupport = typeof document['hidden'] === 'boolean',
     noop = function noop () {},
     expectedSteps = ['update', 'postUpdate', 'preRender', 'render', 'postRender', 'pause', 'resume'];
 
@@ -51,7 +52,9 @@ var Loop = function (steps) {
     this.runningMethod = this.run.bind(this);
     this.paused = false;
 
-    this.observePageVisibility();
+    if (visibilityApiSupport) {
+        this.observePageVisibility();
+    }
 };
 
 Loop.prototype.steps = null;
@@ -62,6 +65,10 @@ Loop.prototype.running = null;
 Loop.prototype.runningMethod = null;
 Loop.prototype.paused = null;
 
+/**
+ * Set the frame rate of the loop
+ * @param {number} frameRate Frame rate
+ */
 Loop.prototype.setFrameRate = function (frameRate) {
     if (frameRate) {
         this.frameRate = frameRate;
@@ -81,15 +88,6 @@ Loop.prototype.start = function () {
     }
 
     this.paused = false;
-};
-
-/**
- * Pause the game loop
- * @protected
- */
-Loop.prototype.pause = function () {
-    this.paused = true;
-    this.lastTime = null;
 };
 
 /**
@@ -114,7 +112,8 @@ Loop.prototype.observePageVisibility = function () {
     var visibilityChangeHandler = function visibilityChangeHandler () {
         if (self.running !== false) {
             if (!self.paused && !!document.hidden) {
-                self.pause();
+                self.paused = true;
+                self.lastTime = null;
                 self.steps.pause();
             } else if (self.paused) {
                 self.start();
@@ -146,7 +145,6 @@ Loop.prototype.run = function (time) {
             steps.postRender(deltaTime);
         }
 
-        //this.lastTime = time - (this.frameDuration ? deltaTime % this.frameDuration : 0);
         this.lastTime = time;
     }
 };
