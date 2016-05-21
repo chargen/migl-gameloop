@@ -1,17 +1,17 @@
 "use strict";
 
-var requestAnimationFrame = (
+var requestFrame = (
         window.requestAnimationFrame ||
         window.webkitRequestAnimationFrame ||
         window.mozRequestAnimationFrame
     ),
-    cancelAnimationFrame = (
+    cancelFrame = (
         window.cancelAnimationFrame ||
         window.webkitCancelAnimationFrame ||
         window.webkitCancelRequestAnimationFrame ||
         window.mozCancelAnimationFrame
     ),
-    visibilityApiSupport = typeof document['hidden'] === 'boolean',
+    visibilityApiSupport = typeof document.hidden === 'boolean',
     noop = function noop () {},
     expectedSteps = ['update', 'postUpdate', 'preRender', 'render', 'postRender', 'pause', 'resume'];
 
@@ -39,7 +39,7 @@ function prepareSteps (steps) {
 }
 
 var Loop = function (steps) {
-    if (!requestAnimationFrame || !cancelAnimationFrame) {
+    if (!requestFrame || !cancelFrame) {
         throw new Error('requestAnimationFrame and cancelAnimationFrame are not fully supported in this environment');
     }
 
@@ -84,7 +84,7 @@ Loop.prototype.setFrameRate = function (frameRate) {
  */
 Loop.prototype.start = function () {
     if (this.running === false) {
-        this.running = requestAnimationFrame(this.runningMethod);
+        this.running = requestFrame(this.runningMethod);
     }
 
     this.paused = false;
@@ -95,7 +95,7 @@ Loop.prototype.start = function () {
  */
 Loop.prototype.stop = function () {
     if (this.running !== false) {
-        cancelAnimationFrame(this.running);
+        cancelFrame(this.running);
         this.running = false;
         this.paused = false;
         this.lastTime = null;
@@ -134,7 +134,7 @@ Loop.prototype.run = function (time) {
     var steps = this.steps,
         deltaTime = this.lastTime === null ? 0 : time - this.lastTime;
 
-    this.running = requestAnimationFrame(this.runningMethod);
+    this.running = requestFrame(this.runningMethod);
 
     if (deltaTime >= this.frameDuration || this.frameRate === null || this.lastTime === null) {
         if (!this.paused) {
