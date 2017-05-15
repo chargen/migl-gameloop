@@ -15,7 +15,6 @@
   "freeze": true,
   "maxparams": 4,
   "maxdepth": 4,
-  "maxcomplexity": 6,
   "maxstatements": 30,
   "browser": true
 }
