@@ -139,13 +139,17 @@ As well as two events hooks to detect when the loops is automatically paused or 
 
 ## Changelog
 
+### [3.0.1](https://github.com/kchapelier/migl-gameloop/tree/3.0.1) (2017-05-15)
+
+ * Remove the use of performance.now() as the argument of the RAF callback has the same precision.
+
 ### [3.0.0](https://github.com/kchapelier/migl-gameloop/tree/3.0.0) (2017-05-15)
 
  * Proper support for WebVR through the new setDisplay() method.
  * The constructors now also accept a display argument.
  * New implementation 'FixedFullFramerateLoop'.
  * New implementation 'FixedHalfFramerateLoop'.
- * FlexibleLoop now uses performance.now() when available for more precise deltaTime.
+ * FlexibleLoop now uses performance.now() when available for more precise deltaTime. (oops, see 3.0.1)
  * Changed the module interface.
  * Remove gulp and jshint-stylish from dev dependency, uses npm scripts instead.
 

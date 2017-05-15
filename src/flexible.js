@@ -1,7 +1,6 @@
 "use strict";
 
-var BaseLoop = require('./base'),
-    performanceNow = typeof window !== 'undefined' && !!window.performance && !!window.performance.now ? window.performance.now.bind(window.performance) : false;
+var BaseLoop = require('./base');
 
 /**
  *
@@ -39,8 +38,6 @@ FlexibleLoop.prototype.setFrameRate = function (frameRate) {
  * @param time
  */
 FlexibleLoop.prototype.run = function (time) {
-    time = performanceNow ? performanceNow() : time;
-
     var steps = this.steps,
         deltaTime = this.lastTime === null ? 0 : time - this.lastTime;
 
