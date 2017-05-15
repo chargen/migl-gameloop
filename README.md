@@ -34,7 +34,7 @@ var loop = new Gameloop({
 loop.start();
 ```
 
-## Type of loops
+## Implementations
 
 There are three implementations of the game loop :
 
@@ -63,13 +63,13 @@ the render methods are executed on the next one. Best used when having consisten
 game is just too demanding to run at 60fps on the user computer. It's best to let the user choose whether he wants this
 30fps cap or not.
 
-If the actual framerate of the user drops (even lower), the game will actually slow down.
+If the actual framerate of the user drops, the game will actually slow down.
 
 Accessible through `require('migl-gameloop').fixedHalfFramerate`.
 
 ## Framerate limiting with the FlexibleLoop
 
-The target number of frames per second can be defined at anytime.
+The target number of frames per second can be defined at anytime with the FlexibleLoop implementation.
 
 ```
 loop.setFrameRate(30);

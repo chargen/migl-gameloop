@@ -34,8 +34,6 @@ function prepareSteps (steps) {
  * @constructor
  */
 var BaseLoop = function (steps, display) {
-    this.setDisplay(display);
-
     this.steps = prepareSteps(steps);
 
     this.frameRate = null;
@@ -44,6 +42,8 @@ var BaseLoop = function (steps, display) {
     this.running = false;
     this.runningMethod = this.run.bind(this);
     this.paused = false;
+
+    this.setDisplay(display);
 
     if (visibilityApiSupport) {
         this.observePageVisibility();
